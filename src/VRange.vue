@@ -32,10 +32,7 @@ export default {
         var range = this.$el,
             circles = range.getElementsByClassName("circle"),
             filled = range.getElementsByClassName("filled")[0],
-            bar = range.getElementsByClassName("bar")[0],
-            pxPerPercent = bar.offsetWidth / 100,
-            minWidthBetweenCirclesPercents =
-                circles[0].offsetWidth / pxPerPercent;
+            bar = range.getElementsByClassName("bar")[0];
         bar.onclick = function(move) {
             var i = +(
                 Math.abs(move.offsetX - circles[0].offsetLeft) >
@@ -73,6 +70,9 @@ export default {
         this.$emit("ready");
 
         function moveTo(index, x) {
+            var pxPerPercent = bar.offsetWidth / 100;
+            var minWidthBetweenCirclesPercents =
+                circles[0].offsetWidth / pxPerPercent;
             var step =
                 (window.scrollX + x - range.offsetLeft - bar.offsetLeft) /
                 pxPerPercent;
