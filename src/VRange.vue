@@ -33,36 +33,22 @@ export default {
             circles = range.getElementsByClassName("circle"),
             filled = range.getElementsByClassName("filled")[0],
             bar = range.getElementsByClassName("bar")[0],
-            offset = circles[0].offsetLeft,
-            firstTouch = true,
             pxPerPercent = bar.offsetWidth / 100,
             minWidthBetweenCirclesPercents =
                 circles[0].offsetWidth / pxPerPercent;
+        bar.onclick = function(move) {
+            var i = +(
+                Math.abs(move.offsetX - circles[0].offsetLeft) >
+                Math.abs(move.offsetX - circles[1].offsetLeft)
+            );
 
-        bar.onclick = function(e) {
-            var i =
-                Math.abs(e.offsetX - circles[0].offsetLeft) <
-                Math.abs(e.offsetX - circles[1].offsetLeft)
-                    ? 0
-                    : 1;
-            var step = (e.x - bar.offsetLeft + offset) / pxPerPercent;
-
-            moveTo(i, step);
+            moveTo(i, move.clientX);
         };
         for (let i = 0; i < circles.length; i++) {
             circles[i].ontouchmove = function(params) {
-                if (firstTouch) {
-                    offset = circles[0].offsetLeft;
-                    firstTouch = false;
-                    pxPerPercent = bar.offsetWidth / 100;
-                    minWidthBetweenCirclesPercents =
-                        circles[0].offsetWidth / pxPerPercent;
-                }
                 self.isDraged = i + 1;
-                var step =
-                    (params.touches[0].clientX - bar.offsetLeft + offset) /
-                    pxPerPercent;
-                moveTo(i, step);
+
+                moveTo(i, params.touches[0].clientX);
             };
             circles[i].ontouchend = function() {
                 self.isDraged = 0;
@@ -72,10 +58,7 @@ export default {
                 e.preventDefault();
                 self.isDraged = i + 1;
                 range.onmousemove = function(move) {
-                    var step =
-                        (move.x - bar.offsetLeft + offset) / pxPerPercent;
-
-                    moveTo(i, step);
+                    moveTo(i, move.clientX);
                 };
             };
         }
@@ -89,7 +72,10 @@ export default {
 
         this.$emit("ready");
 
-        function moveTo(index, step) {
+        function moveTo(index, x) {
+            var step =
+                (window.scrollX + x - range.offsetLeft - bar.offsetLeft) /
+                pxPerPercent;
             var betweenCircles = index
                 ? step - self.value[0]
                 : self.value[1] - step;
@@ -121,7 +107,7 @@ export default {
 }
 .bar {
     transition: all 0.25s;
-    margin: 1.2em 1.1em;
+    margin: 1.2em;
     border-radius: 0.3em;
     background-color: whitesmoke;
     box-shadow: 0 0 0.2em;
