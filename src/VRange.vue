@@ -51,9 +51,9 @@ export default {
                 self.isDraged = 0;
             };
             circles[i].onmousedown = function(e) {
-                e = e || window.event;
-                e.preventDefault();
                 self.isDraged = i + 1;
+                e.preventDefault();
+
                 range.onmousemove = function(move) {
                     moveTo(i, move.clientX);
                 };
@@ -115,11 +115,9 @@ export default {
 .filled {
     height: 0.6em;
     background-color: lightslategray;
-    /* background-color:rgb(136, 184, 255); */
 }
 .circle {
     position: absolute;
-    /* top: -1rem; */
     margin-top: -1.3em;
     margin-left: -1em;
     width: 2em;
